@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "repository": "googledatastudio/dscc-scripts",
   "description": "Scripts for managing Data Studio developer projects.",
+  "main": "build/index.js",
   "bin": {
     "dscc-scripts": "build/index.js"
   },
-  "repository": "https://github.com/googledatastudio/dscc-scripts",
-  "license": "MIT",
+  "engines": {
+    "node": ">=7.10.0",
+    "npm": ">=5.2.0"
+  },
+  "author": "Matt Hamrick <matthewjhamrick@gmail.com>",
+  "license": "Apache-2.0",
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5",
