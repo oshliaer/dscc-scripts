@@ -30,24 +30,24 @@ export interface BuildValues {
 }
 
 export const validateBuildValues = (args: VizArgs): BuildValues => {
-  const cssFile = process.env.npm_packagedsccViz_cssFile;
+  const cssFile = process.env.npm_package_dsccViz_cssFile;
   if (cssFile === undefined) {
     throw invalidVizConfig('cssFile');
   }
-  const jsonFile = process.env.npm_packagedsccViz_jsonFile!;
+  const jsonFile = process.env.npm_package_dsccViz_jsonFile;
   if (jsonFile === undefined) {
     throw invalidVizConfig('jsonFile');
   }
-  const jsFile = process.env.npm_packagedsccViz_jsFile!;
+  const jsFile = process.env.npm_package_dsccViz_jsFile;
   if (jsFile === undefined) {
     throw invalidVizConfig('jsFile');
   }
-  const devBucket = process.env.npm_packagedsccViz_gcsDevBucket!;
-  if (jsonFile === undefined) {
+  const devBucket = process.env.npm_package_dsccViz_gcsDevBucket;
+  if (devBucket === undefined) {
     throw invalidVizConfig('gcsDevBucket');
   }
-  const prodBucket = process.env.npm_packagedsccViz_gcsProdBucket!;
-  if (jsonFile === undefined) {
+  const prodBucket = process.env.npm_package_dsccViz_gcsProdBucket;
+  if (prodBucket === undefined) {
     throw invalidVizConfig('gcsProdBucket');
   }
   const devMode = args.deployment === DeploymentChoices.PROD ? false : true;
