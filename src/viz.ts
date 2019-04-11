@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as bluebird from 'bluebird';
-import * as shelljs from 'shelljs';
+import * as execa from 'execa';
 import {VizArgs, VizScripts} from './args';
 import {assertNever} from './util';
 import {build} from './viz/build';
 import {buildMessage} from './viz/message';
-import {BuildValues} from './viz/util';
 import * as util from './viz/util';
 
-const asyncExec = bluebird.promisify(shelljs.exec);
-
 const start = async (): Promise<void> => {
-  return asyncExec('webpack-dev-server --open').then(() => {
-    return;
-  });
+  await execa('webpack-dev-server', ['--open']);
 };
 
 const deploy = async (args: VizArgs): Promise<void> => {
   const buildValues = util.validateBuildValues(args);
-  shelljs.cd('build');
-  await asyncExec(`gsutil cp -a public-read * ${buildValues.gcsBucket}`);
+  await execa('gsutil', [
+    'cp',
+    '-a',
+    'public-read',
+    'build/*',
+    buildValues.gcsBucket,
+  ]);
   console.log(`Viz deployed to: ${buildValues.gcsBucket}`);
 };
 

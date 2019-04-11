@@ -17,19 +17,18 @@ or
 yarn add -D @google/dscc-scripts
 ```
 
-This will make the `dscc-scripts` available to your `package.json`'s `scripts`
-property.
+This will make `dscc-scripts` available to your npm scripts.
 
 The scripts require your `package.json` to have some configuration.
 
 ### Viz
 
-For viz, you need a `config` property.
+For viz, you need to add a `dsccViz` property.
 
 ```json
 {
     ...,
-    "config": {
+    "dsccViz": {
         "gcsDevBucket": "{{DEV_BUCKET}}",
         "gcsProdBucket": "{{PROD_BUCKET}}",
         "jsFile": "index.js",
@@ -50,14 +49,15 @@ The following scripts are available for viz.
 
 ### Connectors
 
-For connectors, you need a `deployments` property.
+For connectors, you need to add a `dsccConnector` property.
 
 ```json
 {
   ...,
-  "deployments": {
+  "dsccConnector": {
     "production": "{{PRODUCTION_DEPLOYMENT_ID}}",
-    "latest": "{{LATEST_DEPLOYMENT_ID}}"
+    "latest": "{{LATEST_DEPLOYMENT_ID}}",
+    "template": "{{TEMPLATE_ID}}"
   },
   ...
 }
@@ -71,5 +71,6 @@ The following scripts are available for connectors.
 +   `npm run dscc-scripts connector try_production -h`
 +   `npm run dscc-scripts connector try_latest -h`
 +   `npm run dscc-scripts connector update_production -h`
++   `npm run dscc-scripts connector open_template -h`
 
 [dscc-gen]: https://github.com/googledatastudio/dscc-gen

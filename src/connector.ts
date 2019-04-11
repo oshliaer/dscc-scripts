@@ -14,23 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as bluebird from 'bluebird';
-import chalk from 'chalk';
+import * as execa from 'execa';
 import open = require('open');
-import * as shelljs from 'shelljs';
 import terminalLink from 'terminal-link';
 import {ConnectorArgs, ConnectorScripts} from './args';
-import {assertNever} from './util';
-
-const asyncExec = bluebird.promisify(shelljs.exec);
+import {assertNever, format, invalidConnectorConfig} from './util';
 
 const openDeployment = async (
   deploymentId: string,
   deploymentName: string
 ): Promise<void> => {
-  const green = chalk.rgb(15, 157, 88);
   const deploymentUrl = `https://datastudio.google.com/datasources/create?connectorId=${deploymentId}`;
-  const formattedUrl = green(
+  const formattedUrl = format.green(
     terminalLink(`${deploymentName} deployment`, deploymentUrl)
   );
   console.log(`Opening: ${formattedUrl}`);
@@ -39,67 +34,66 @@ const openDeployment = async (
   });
 };
 
-const updateDeployment = async (deploymentId: string): Promise<void> => {
-  return asyncExec(
-    `npx @google/clasp deploy --deploymentId ${deploymentId}`
-  ).then(() => {
-    return;
-  });
-};
-
-const missingDeploymentsKey = () => {
-  return new Error(
-    `Your package.json must have a deployments entry:\n${JSON.stringify(
-      {
-        deployments: {
-          production: 'prodDeploymentId',
-          latest: 'latestDeploymentId',
-        },
-      },
-      undefined,
-      '  '
-    )}`
-  );
-};
-
 const tryProduction = async (): Promise<void> => {
-  const prodDeploymentId = process.env.npm_package_deployments_production;
+  const prodDeploymentId = process.env.npm_package_dsccConnector_production;
   if (prodDeploymentId === undefined) {
-    throw missingDeploymentsKey();
+    throw invalidConnectorConfig('production');
   }
-  return openDeployment(prodDeploymentId, 'production');
+  return openDeployment(prodDeploymentId, 'Production');
 };
 
 const tryLatest = async (): Promise<void> => {
-  const latestDeploymentId = process.env.npm_package_deployments_latest;
+  const latestDeploymentId = process.env.npm_package_dsccConnector_latest;
   if (latestDeploymentId === undefined) {
-    throw missingDeploymentsKey();
+    throw invalidConnectorConfig('latest');
   }
   return openDeployment(latestDeploymentId, 'latest');
 };
 
 const updateProduction = async () => {
-  const prodDeploymentId = process.env.npm_package_deployments_production;
+  const prodDeploymentId = process.env.npm_package_dsccConnector_production;
   if (prodDeploymentId === undefined) {
-    throw missingDeploymentsKey();
+    throw invalidConnectorConfig('production');
   }
-  return updateDeployment(prodDeploymentId);
+  return execa('npx', [
+    '@google/clasp',
+    'deploy',
+    '--deploymentId',
+    prodDeploymentId,
+    '--description',
+    'Production',
+  ]).then(() => {
+    return;
+  });
 };
 
 const pushChanges = async (): Promise<void> => {
-  return asyncExec(`npx @google/clasp push`).then(() => {
+  return execa('npx', ['@google/clasp', 'push']).then(() => {
     return;
   });
 };
 
 const watchChanges = async (): Promise<void> => {
-  return asyncExec(`npx @google/clasp push --watch`).then(() => {
+  return execa('npx', ['@google/clasp', 'push', '--watch']).then(() => {
     return;
   });
 };
 
 const openScript = async (): Promise<void> => {
-  return asyncExec(`npx @google/clasp open`).then(() => {
+  return execa('npx', ['@google/clasp', 'open']).then(() => {
+    return;
+  });
+};
+
+const openTemplate = async (): Promise<void> => {
+  const templateId = process.env.npm_package_dsccConnector_template;
+  if (templateId === undefined) {
+    throw invalidConnectorConfig('template');
+  }
+  const templateUrl = `https://datastudio.google.com/c/reporting/${templateId}`;
+  const formattedUrl = format.green(terminalLink(`open template`, templateUrl));
+  console.log(`Opening: ${formattedUrl}`);
+  return open(templateUrl).then(() => {
     return;
   });
 };
@@ -110,7 +104,7 @@ export const main = async (args: ConnectorArgs): Promise<void> => {
       return tryProduction();
     case ConnectorScripts.TRY_LATEST:
       return tryLatest();
-    case ConnectorScripts.UPADTE_PRODUCTION:
+    case ConnectorScripts.UPDATE_PRODUCTION:
       return updateProduction();
     case ConnectorScripts.PUSH_CHANGES:
       return pushChanges();
@@ -118,6 +112,8 @@ export const main = async (args: ConnectorArgs): Promise<void> => {
       return watchChanges();
     case ConnectorScripts.OPEN_SCRIPT:
       return openScript();
+    case ConnectorScripts.OPEN_TEMPLATE:
+      return openTemplate();
     default:
       return assertNever(args.script);
   }

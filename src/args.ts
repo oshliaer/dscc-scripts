@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import * as argparse from 'argparse';
+import {assertNever} from './util';
 
 export enum ScriptChoice {
   CONNECTOR = 'connector',
@@ -27,7 +28,8 @@ export enum ConnectorScripts {
   OPEN_SCRIPT = 'open_script',
   TRY_PRODUCTION = 'try_production',
   TRY_LATEST = 'try_latest',
-  UPADTE_PRODUCTION = 'update_production',
+  UPDATE_PRODUCTION = 'update_production',
+  OPEN_TEMPLATE = 'open_template',
 }
 
 export interface ConnectorArgs {
@@ -45,34 +47,53 @@ const addConnectorParserDetails = (subparsers: argparse.SubParser) => {
     dest: 'script',
   });
 
-  connectorSubparsers.addParser(ConnectorScripts.PUSH_CHANGES, {
-    addHelp: true,
-    description: 'Push your local changes to Apps Script.',
-  });
-
-  connectorSubparsers.addParser(ConnectorScripts.WATCH_CHANGES, {
-    addHelp: true,
-    description: 'Watch for local changes, and push them to Apps Script.',
-  });
-
-  connectorSubparsers.addParser(ConnectorScripts.OPEN_SCRIPT, {
-    addHelp: true,
-    description: 'Open your Apps Script project in your browser.',
-  });
-
-  connectorSubparsers.addParser(ConnectorScripts.TRY_PRODUCTION, {
-    addHelp: true,
-    description: 'Try the production deployment of your connector.',
-  });
-
-  connectorSubparsers.addParser(ConnectorScripts.TRY_LATEST, {
-    addHelp: true,
-    description: 'Try the latest version of your connector.',
-  });
-
-  connectorSubparsers.addParser(ConnectorScripts.UPADTE_PRODUCTION, {
-    addHelp: true,
-    description: 'Update the production deployment of your connector.',
+  Object.values(ConnectorScripts).forEach((scriptName: ConnectorScripts) => {
+    switch (scriptName) {
+      case ConnectorScripts.PUSH_CHANGES:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Push your local changes to Apps Script.',
+        });
+        break;
+      case ConnectorScripts.WATCH_CHANGES:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Watch for local changes, and push them to Apps Script.',
+        });
+        break;
+      case ConnectorScripts.OPEN_SCRIPT:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Open your Apps Script project in your browser.',
+        });
+        break;
+      case ConnectorScripts.TRY_PRODUCTION:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Try the production deployment of your connector.',
+        });
+        break;
+      case ConnectorScripts.TRY_LATEST:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Try the latest version of your connector.',
+        });
+        break;
+      case ConnectorScripts.UPDATE_PRODUCTION:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Update the production deployment of your connector.',
+        });
+        break;
+      case ConnectorScripts.OPEN_TEMPLATE:
+        connectorSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Open the template for your connector.',
+        });
+        break;
+      default:
+        return assertNever(scriptName);
+    }
   });
 };
 
@@ -109,29 +130,43 @@ const addVizParserDetails = (subparsers: argparse.SubParser) => {
     dest: 'script',
   });
 
-  vizSubparsers.addParser(VizScripts.START, {
-    addHelp: true,
-    description: 'Run your viz locally with live-code reloading.',
-  });
-
-  const build = vizSubparsers.addParser(VizScripts.BUILD, {
-    addHelp: true,
-    description: 'Build your viz',
-  });
-
-  const push = vizSubparsers.addParser(VizScripts.PUSH, {
-    addHelp: true,
-    description: 'Deploy your viz.',
-  });
-
-  const updateMessage = vizSubparsers.addParser(VizScripts.UPDATE_MESSAGE, {
-    addHelp: true,
-    description:
-      'Temporarily update your viz so you can copy example data from Data Studio.',
+  let build: argparse.ArgumentParser;
+  let push: argparse.ArgumentParser;
+  let updateMessage: argparse.ArgumentParser;
+  Object.values(VizScripts).forEach((scriptName: VizScripts) => {
+    switch (scriptName) {
+      case VizScripts.START:
+        vizSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Run your viz locally with live-code reloading.',
+        });
+        break;
+      case VizScripts.BUILD:
+        build = vizSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Build your viz',
+        });
+        break;
+      case VizScripts.PUSH:
+        push = vizSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description: 'Deploy your viz.',
+        });
+        break;
+      case VizScripts.UPDATE_MESSAGE:
+        updateMessage = vizSubparsers.addParser(scriptName, {
+          addHelp: true,
+          description:
+            'Temporarily update your viz so you can copy example data from Data Studio.',
+        });
+        break;
+      default:
+        return assertNever(scriptName);
+    }
   });
 
   // Add common arguments to build & push.
-  [build, push].forEach((parser) => {
+  [build!, push!].forEach((parser) => {
     parser.addArgument(['-d', '--deployment'], {
       choices: [DeploymentChoices.PROD, DeploymentChoices.DEV],
       dest: 'deployment',
@@ -140,7 +175,7 @@ const addVizParserDetails = (subparsers: argparse.SubParser) => {
     });
   });
 
-  updateMessage.addArgument(['-f', '--format'], {
+  updateMessage!.addArgument(['-f', '--format'], {
     choices: [MessageFormat.OBJECT, MessageFormat.TABLE],
     dest: 'format',
     help: 'The format for the data.',

@@ -14,6 +14,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import chalk from 'chalk';
+
 export const assertNever = (x: never): never => {
   throw new Error('Unexpected object: ' + x);
+};
+
+export const format = {
+  green: chalk.bold.rgb(15, 157, 88),
+  blue: chalk.bold.rgb(66, 133, 244),
+  yellow: chalk.bold.rgb(244, 160, 0),
+  red: chalk.bold.rgb(219, 68, 55),
+};
+
+interface VizConfig {
+  dsccViz: {
+    gcsDevBucket: string;
+    gcsProdBucket: string;
+    jsFile: string;
+    jsonFile: string;
+    cssFile: string;
+    print: string;
+  };
+}
+
+const exampleVizConfig: VizConfig = {
+  dsccViz: {
+    gcsDevBucket: 'gs://validBucketPath',
+    gcsProdBucket: 'gs://validBucketPath',
+    jsFile: 'index.js',
+    jsonFile: 'index.json',
+    cssFile: 'index.css',
+    print: 'printMessage.js',
+  },
+};
+
+interface ConnectorConfig {
+  dsccConnector: {
+    production: string;
+    latest: string;
+    template: string;
+  };
+}
+
+const exampleConnectorConfig: ConnectorConfig = {
+  dsccConnector: {
+    production: 'prodDeploymentId',
+    latest: 'latestDeploymentId',
+    template: 'templateId',
+  },
+};
+
+const invalidConfig = (path: string, config: VizConfig | ConnectorConfig) => {
+  const colorizedPath = format.green(path);
+  const packageJSON = format.blue.bold('package.json');
+  return new Error(
+    `Your ${packageJSON} must have a ${colorizedPath} entry:\n${JSON.stringify(
+      config,
+      undefined,
+      '  '
+    )}`
+  );
+};
+
+export const invalidConnectorConfig = (
+  path: keyof ConnectorConfig['dsccConnector']
+) => {
+  return invalidConfig(`dsccConnector.${path}`, exampleConnectorConfig);
+};
+
+export const invalidVizConfig = (path: keyof VizConfig['dsccViz']) => {
+  return invalidConfig(`dsccViz.${path}`, exampleVizConfig);
 };

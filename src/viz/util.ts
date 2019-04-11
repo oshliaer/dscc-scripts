@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import {DeploymentChoices, VizArgs} from '../args';
+import {invalidVizConfig} from '../util';
 
 export interface BuildValues {
   devBucket: string;
@@ -28,46 +29,26 @@ export interface BuildValues {
   gcsBucket: string;
 }
 
-const invalidConfig = () => {
-  const config = {
-    config: {
-      gcsDevBucket: 'gs://validBucketPath',
-      gcsProdBucket: 'gs://validBucketPath',
-      jsFile: 'index.js',
-      jsonFile: 'index.json',
-      cssFile: 'index.css',
-      print: 'printMessage.js',
-    },
-  };
-  return new Error(
-    `Your package.json must have a config entry:\n${JSON.stringify(
-      config,
-      undefined,
-      '  '
-    )}`
-  );
-};
-
 export const validateBuildValues = (args: VizArgs): BuildValues => {
-  const cssFile = process.env.npm_package_config_cssFile;
+  const cssFile = process.env.npm_packagedsccViz_cssFile;
   if (cssFile === undefined) {
-    throw invalidConfig();
+    throw invalidVizConfig('cssFile');
   }
-  const jsonFile = process.env.npm_package_config_jsonFile!;
+  const jsonFile = process.env.npm_packagedsccViz_jsonFile!;
   if (jsonFile === undefined) {
-    throw invalidConfig();
+    throw invalidVizConfig('jsonFile');
   }
-  const jsFile = process.env.npm_package_config_jsFile!;
+  const jsFile = process.env.npm_packagedsccViz_jsFile!;
   if (jsFile === undefined) {
-    throw invalidConfig();
+    throw invalidVizConfig('jsFile');
   }
-  const devBucket = process.env.npm_package_config_gcsDevBucket!;
+  const devBucket = process.env.npm_packagedsccViz_gcsDevBucket!;
   if (jsonFile === undefined) {
-    throw invalidConfig();
+    throw invalidVizConfig('gcsDevBucket');
   }
-  const prodBucket = process.env.npm_package_config_gcsProdBucket!;
+  const prodBucket = process.env.npm_packagedsccViz_gcsProdBucket!;
   if (jsonFile === undefined) {
-    throw invalidConfig();
+    throw invalidVizConfig('gcsProdBucket');
   }
   const devMode = args.deployment === DeploymentChoices.PROD ? false : true;
   const gcsBucket = devMode ? devBucket : prodBucket;
