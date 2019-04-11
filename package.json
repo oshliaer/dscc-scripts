@@ -1,6 +1,7 @@
 {
   "name": "@google/dscc-scripts",
   "version": "1.0.0",
+  "repository": "googledatastudio/dscc-scripts",
   "description": "Scripts for managing Data Studio developer projects.",
   "bin": {
     "dscc-scripts": "build/index.js"
