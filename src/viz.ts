@@ -16,24 +16,22 @@
  */
 import * as execa from 'execa';
 import {VizArgs, VizScripts} from './args';
-import {assertNever} from './util';
+import {assertNever, pipeStdIO} from './util';
 import {build} from './viz/build';
 import {buildMessage} from './viz/message';
 import * as util from './viz/util';
 
 const start = async (): Promise<void> => {
-  await execa('webpack-dev-server', ['--open']);
+  await execa('webpack-dev-server', ['--open'], pipeStdIO);
 };
 
 const deploy = async (args: VizArgs): Promise<void> => {
   const buildValues = util.validateBuildValues(args);
-  await execa('gsutil', [
-    'cp',
-    '-a',
-    'public-read',
-    'build/*',
-    buildValues.gcsBucket,
-  ]);
+  await execa(
+    'gsutil',
+    ['cp', '-a', 'public-read', 'build/*', buildValues.gcsBucket],
+    pipeStdIO
+  );
   console.log(`Viz deployed to: ${buildValues.gcsBucket}`);
 };
 

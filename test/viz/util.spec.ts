@@ -10,7 +10,11 @@ beforeEach(() => {
 });
 
 test('validateBuildValues happyPath', () => {
-  expect(sut.validateBuildValues({script: VizScripts.BUILD})).toEqual({
+  const actual = sut.validateBuildValues({script: VizScripts.BUILD});
+  // Don't care about pwd in tests.
+  delete actual.pwd;
+
+  expect(actual).toEqual({
     cssFile: 'cssFile',
     devBucket: 'gcsDevBucket',
     devMode: true,
@@ -19,7 +23,6 @@ test('validateBuildValues happyPath', () => {
     jsonFile: 'jsonFile',
     manifestFile: 'manifest.json',
     prodBucket: 'gcsProdBucket',
-    pwd: '/usr/local/google/home/mjhamrick/programming/dscc-scripts',
   });
 });
 

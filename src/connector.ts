@@ -18,7 +18,7 @@ import * as execa from 'execa';
 import open = require('open');
 import terminalLink from 'terminal-link';
 import {ConnectorArgs, ConnectorScripts} from './args';
-import {assertNever, format, invalidConnectorConfig} from './util';
+import {assertNever, format, invalidConnectorConfig, pipeStdIO} from './util';
 
 const openDeployment = async (
   deploymentId: string,
@@ -29,9 +29,7 @@ const openDeployment = async (
     terminalLink(`${deploymentName} deployment`, deploymentUrl)
   );
   console.log(`Opening: ${formattedUrl}`);
-  return open(deploymentUrl).then(() => {
-    return;
-  });
+  await open(deploymentUrl);
 };
 
 const tryProduction = async (): Promise<void> => {
@@ -55,34 +53,30 @@ const updateProduction = async () => {
   if (prodDeploymentId === undefined) {
     throw invalidConnectorConfig('production');
   }
-  return execa('npx', [
-    '@google/clasp',
-    'deploy',
-    '--deploymentId',
-    prodDeploymentId,
-    '--description',
-    'Production',
-  ]).then(() => {
-    return;
-  });
+  await execa(
+    'npx',
+    [
+      '@google/clasp',
+      'deploy',
+      '--deploymentId',
+      prodDeploymentId,
+      '--description',
+      'Production',
+    ],
+    pipeStdIO
+  );
 };
 
 const pushChanges = async (): Promise<void> => {
-  return execa('npx', ['@google/clasp', 'push']).then(() => {
-    return;
-  });
+  await execa('npx', ['@google/clasp', 'push'], pipeStdIO);
 };
 
 const watchChanges = async (): Promise<void> => {
-  return execa('npx', ['@google/clasp', 'push', '--watch']).then(() => {
-    return;
-  });
+  await execa('npx', ['@google/clasp', 'push', '--watch'], pipeStdIO);
 };
 
 const openScript = async (): Promise<void> => {
-  return execa('npx', ['@google/clasp', 'open']).then(() => {
-    return;
-  });
+  await execa('npx', ['@google/clasp', 'open'], pipeStdIO);
 };
 
 const openTemplate = async (): Promise<void> => {
@@ -93,9 +87,7 @@ const openTemplate = async (): Promise<void> => {
   const templateUrl = `https://datastudio.google.com/c/reporting/${templateId}`;
   const formattedUrl = format.green(terminalLink(`open template`, templateUrl));
   console.log(`Opening: ${formattedUrl}`);
-  return open(templateUrl).then(() => {
-    return;
-  });
+  await open(templateUrl);
 };
 
 export const main = async (args: ConnectorArgs): Promise<void> => {

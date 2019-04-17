@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import chalk from 'chalk';
+import {CommonOptions} from 'execa';
 
 export const assertNever = (x: never): never => {
   throw new Error('Unexpected object: ' + x);
@@ -86,3 +87,5 @@ export const invalidConnectorConfig = (
 export const invalidVizConfig = (path: keyof VizConfig['dsccViz']) => {
   return invalidConfig(`dsccViz.${path}`, exampleVizConfig);
 };
+
+export const pipeStdIO: CommonOptions = {stdio: 'pipe'};
