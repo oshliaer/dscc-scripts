@@ -88,4 +88,4 @@ export const invalidVizConfig = (path: keyof VizConfig['dsccViz']) => {
   return invalidConfig(`dsccViz.${path}`, exampleVizConfig);
 };
 
-export const pipeStdIO: CommonOptions = {stdio: 'pipe'};
+export const pipeStdIO: CommonOptions = {stdio: 'inherit'};
