@@ -21,7 +21,7 @@ import {main} from './main';
   try {
     await main();
   } catch (e) {
-    console.error(`${e}`);
+    console.error(e.message);
     process.exit(1);
   }
   process.exit(0);

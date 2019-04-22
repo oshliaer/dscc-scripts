@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 import * as execa from 'execa';
+import * as fs from 'mz/fs';
 import open = require('open');
+import * as path from 'path';
 import terminalLink from 'terminal-link';
 import {ConnectorArgs, ConnectorScripts} from './args';
 import {assertNever, format, invalidConnectorConfig, pipeStdIO} from './util';
@@ -79,10 +81,63 @@ const openScript = async (): Promise<void> => {
   await execa('npx', ['@google/clasp', 'open'], pipeStdIO);
 };
 
+const getAppsScriptManifest = async (): Promise<any> => {
+  const pwd = process.env.PWD!;
+  const manifestPath = path.resolve(pwd, 'src', 'appsscript.json');
+  const manifestExists = await fs.exists(manifestPath);
+  if (!manifestExists) {
+    throw missingAppsScriptManifest();
+  }
+  const manifestJSON = await fs.readFile(manifestPath, 'utf-8');
+  try {
+    return JSON.parse(manifestJSON);
+  } catch (e) {
+    console.log(e.message);
+    const localManifestPath = format.green('./src/appsscript.json');
+    throw new Error(`${localManifestPath} is not valid JSON.`);
+  }
+};
+
+const missingAppsScriptManifest = () => {
+  const appsScriptManifest = format.blue.bold('./src/appsscript.json');
+  return new Error(`${appsScriptManifest} must exist.`);
+};
+
+const invalidAppsScriptManifest = (propertyPath: string[]) => {
+  const colorizedPath = format.green(propertyPath.join('.'));
+  const appsScriptManifest = format.blue.bold('./src/appsscript.json');
+  const manifest = {
+    dataStudio: {
+      name: 'filter-pushdown',
+      logoUrl: 'logoUrl',
+      company: 'manifestCompany',
+      companyUrl: 'companyUrl',
+      addonUrl: 'addonUrl',
+      supportUrl: 'supportUrl',
+      description: 'description',
+      sources: [''],
+      templates: {
+        default: '1_ldCRrcGf3G1gIw5Dbxsa5NEL2-3WMlm',
+      },
+    },
+  };
+  let manifestString = JSON.stringify(manifest, undefined, '  ');
+  manifestString = propertyPath.reduce((acc, property) => {
+    return acc.replace(property, format.green(property));
+  }, manifestString);
+  return new Error(
+    `${appsScriptManifest} must have a ${colorizedPath} entry:\n${manifestString}`
+  );
+};
+
 const openTemplate = async (): Promise<void> => {
-  const templateId = process.env.npm_package_dsccConnector_template;
+  const manifest = await getAppsScriptManifest();
+  const templatePath = ['dataStudio', 'templates', 'default'];
+  const templateId = templatePath.reduce((acc, property) => {
+    return acc === undefined ? undefined : acc[property];
+  }, manifest);
   if (templateId === undefined) {
-    throw invalidConnectorConfig('template');
+    throw invalidAppsScriptManifest(templatePath);
   }
   const templateUrl = `https://datastudio.google.com/c/reporting/${templateId}`;
   const formattedUrl = format.green(terminalLink(`open template`, templateUrl));

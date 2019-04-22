@@ -56,8 +56,7 @@ For connectors, you need to add a `dsccConnector` property.
   ...,
   "dsccConnector": {
     "production": "{{PRODUCTION_DEPLOYMENT_ID}}",
-    "latest": "{{LATEST_DEPLOYMENT_ID}}",
-    "template": "{{TEMPLATE_ID}}"
+    "latest": "{{LATEST_DEPLOYMENT_ID}}"
   },
   ...
 }

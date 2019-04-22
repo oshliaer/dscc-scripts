@@ -54,7 +54,6 @@ interface ConnectorConfig {
   dsccConnector: {
     production: string;
     latest: string;
-    template: string;
   };
 }
 
@@ -62,7 +61,6 @@ const exampleConnectorConfig: ConnectorConfig = {
   dsccConnector: {
     production: 'prodDeploymentId',
     latest: 'latestDeploymentId',
-    template: 'templateId',
   },
 };
 
