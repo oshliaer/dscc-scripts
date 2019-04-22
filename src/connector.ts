@@ -117,7 +117,7 @@ const invalidAppsScriptManifest = (propertyPath: string[]) => {
       description: 'description',
       sources: [''],
       templates: {
-        default: '1_ldCRrcGf3G1gIw5Dbxsa5NEL2-3WMlm',
+        default: 'report-id',
       },
     },
   };
