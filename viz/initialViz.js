@@ -25,10 +25,10 @@ To update your local data:
 <li>Update the config in <code>./src/index.json</code></li>
 <li>
   Run: <br/>
-  <code>npm run update_message -- --format=object</code>
+  <code>npm run update_message</code>
 </li>
 <li>Deploy the visualization using your dev bucket as your component ID in Data Studio</li>
-<li>Replace the contents of <code>./scripts/localData.js</code> with the displayed code.</li>
+<li>Replace the contents of <code>./src/localMessage.js</code> with the displayed code.</li>
 </ol>
 </p>
 
