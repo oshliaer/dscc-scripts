@@ -20,6 +20,7 @@
     "arrowParens": "always"
   },
   "scripts": {
+    "random": "tsc && node build/test.js",
     "build": "tsc",
     "build:check": "tsc --noEmit",
     "build:watch": "tsc --watch",
@@ -62,6 +63,7 @@
     "@types/open": "^6.0.0",
     "@types/terminal-link": "^1.1.0",
     "@types/webpack": "^4.4.26",
+    "ajv": "^6.10.0",
     "jest": "^24.5.0",
     "prettier": "^1.11.1",
     "ts-jest": "^24.0.0",

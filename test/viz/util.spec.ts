@@ -65,3 +65,7 @@ test('validateBuildValues missing gcsProdBucket', () => {
     'dsccViz.gcsProdBucket'
   );
 });
+
+test('validateManifest works', () => {
+
+});
