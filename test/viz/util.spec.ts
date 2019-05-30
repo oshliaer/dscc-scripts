@@ -1,5 +1,12 @@
 import {VizScripts} from '../../src/args';
 import * as sut from '../../src/viz/util';
+import * as fs from 'mz/fs';
+import {manifestSchema, configSchema} from '../../src/viz/schemas'
+
+const readFile = async (fn: string) => {
+  const encoding = 'utf-8';
+  return fs.readFile(fn, encoding);
+}
 
 beforeEach(() => {
   process.env.npm_package_dsccViz_cssFile = 'cssFile';
@@ -67,5 +74,15 @@ test('validateBuildValues missing gcsProdBucket', () => {
 });
 
 test('validateManifest works', () => {
+  const validManifestFn = './test/viz/files/manifest.json';
+  return readFile(validManifestFn).then(manifestJSON => {
+    expect(sut.validateJSON(manifestJSON, manifestSchema)).toBe(true);
+  });
+});
 
+test('validateConfig works', () => {
+  const validConfigFn = './test/viz/files/config.json';
+  return readFile(validConfigFn).then(configJSON => {
+    expect(sut.validateJSON(configJSON, configSchema)).toBe(true);
+  });
 });

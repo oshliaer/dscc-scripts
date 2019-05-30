@@ -16,6 +16,7 @@
  */
 import {DeploymentChoices, VizArgs} from '../args';
 import {invalidVizConfig} from '../util';
+import * as Ajv from 'ajv';
 
 export interface BuildValues {
   devBucket: string;
@@ -65,4 +66,13 @@ export const validateBuildValues = (args: VizArgs): BuildValues => {
     pwd,
     gcsBucket,
   };
+};
+
+export const validateJSON = (jsonStr: string, schema: any) => {
+  const ajv = new Ajv({allErrors: true});
+  const jsonObject = JSON.parse(jsonStr);
+  const testJson = ajv.compile(schema);
+  const isValid = testJson(jsonObject);
+  // testJson.errors
+  return isValid;
 };
