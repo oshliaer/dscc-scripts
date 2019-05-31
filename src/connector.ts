@@ -81,7 +81,7 @@ const openScript = async (): Promise<void> => {
   await execa('npx', ['@google/clasp', 'open'], pipeStdIO);
 };
 
-const getAppsScriptManifest = async (): Promise<any> => {
+export const getAppsScriptManifest = async (): Promise<any> => {
   const pwd = process.env.PWD!;
   const manifestPath = path.resolve(pwd, 'src', 'appsscript.json');
   const manifestExists = await fs.exists(manifestPath);

@@ -17,8 +17,7 @@
         "functions": "never",
         "typeLiterals": "always"
       }
-    }],
-    "strict-boolean-expressions": [true]
+    }]
   },
   "rulesDirectory": []
 }

@@ -1,7 +1,7 @@
-import * as sut from '../src/connector';
-import {ConnectorScripts} from '../src/args';
-import open = require('open');
 import * as execa from 'execa';
+import open = require('open');
+import {ConnectorScripts} from '../src/args';
+import * as sut from '../src/connector';
 jest.mock('open');
 jest.mock('execa');
 
@@ -37,14 +37,6 @@ test('update_production happy path', () => {
   ).resolves.toEqual(undefined);
 });
 
-test('open_template happy path', () => {
-  (open as any).mockResolvedValue(undefined);
-
-  expect(sut.main({script: ConnectorScripts.OPEN_TEMPLATE})).resolves.toEqual(
-    undefined
-  );
-});
-
 test('try_production missing from package.json', () => {
   delete process.env.npm_package_dsccConnector_production;
 
@@ -69,10 +61,26 @@ test('update_production missing from package.json', () => {
   ).rejects.toThrow('production');
 });
 
-test('open_template missing from package.json', () => {
-  delete process.env.npm_package_dsccConnector_template;
+describe('for open_template', () => {
+  const validManifest = {dataStudio: {templates: {default: 'report-id'}}};
 
-  expect(sut.main({script: ConnectorScripts.OPEN_TEMPLATE})).rejects.toThrow(
-    'template'
-  );
+  beforeEach(() => {
+    jest.spyOn(sut, 'getAppsScriptManifest').mockResolvedValue(validManifest);
+  });
+
+  test('happy path', () => {
+    (open as any).mockResolvedValue(undefined);
+
+    expect(sut.main({script: ConnectorScripts.OPEN_TEMPLATE})).resolves.toEqual(
+      undefined
+    );
+  });
+
+  test('template missing from package.json', () => {
+    delete validManifest.dataStudio.templates;
+
+    expect(sut.main({script: ConnectorScripts.OPEN_TEMPLATE})).rejects.toThrow(
+      'template'
+    );
+  });
 });
