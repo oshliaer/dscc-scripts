@@ -22,6 +22,8 @@ import * as webpack from 'webpack';
 import {VizArgs} from '../args';
 import * as util from './util';
 import {BuildValues} from './util';
+import {manifestSchema, configSchema} from './viz/schemas'
+
 
 const buildOptions = (buildValues: BuildValues): webpack.Configuration => {
   // common options
@@ -65,6 +67,17 @@ export const build = async (args: VizArgs) => {
   const encoding = 'utf-8';
   const webpackOptions = buildOptions(buildValues);
   const compiler = webpack(webpackOptions);
+
+
+  const configSrc = path.resolve(
+    process.env.PWD!,
+    'src',
+    buildValues.jsonFile
+  );
+  const configContents = await fs.readFile(configSrc, encoding);
+
+  util.validateJSON(configContents, configSchema, 'config');
+
   const compilerRun = bluebird.promisify(compiler.run, {context: compiler});
 
   await compilerRun();

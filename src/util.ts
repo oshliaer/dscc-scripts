@@ -87,3 +87,11 @@ export const invalidVizConfig = (path: keyof VizConfig['dsccViz']) => {
 };
 
 export const pipeStdIO: CommonOptions = {stdio: 'inherit'};
+
+export const invalidVizJSON = (fn: string, err: any) => {
+  const colorizedFn = format.green(fn);
+  return new Error(`
+    Invalid ${colorizedFn}\n
+    ${JSON.stringify(err)}
+  `);
+};

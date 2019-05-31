@@ -73,16 +73,26 @@ test('validateBuildValues missing gcsProdBucket', () => {
   );
 });
 
-test('validateManifest works', () => {
+test('valid manifest', () => {
   const validManifestFn = './test/viz/files/manifest.json';
+  const file = 'manifest';
   return readFile(validManifestFn).then(manifestJSON => {
-    expect(sut.validateJSON(manifestJSON, manifestSchema)).toBe(true);
+    expect(sut.validateJSON(manifestJSON, manifestSchema, file)).toBe(true);
   });
 });
 
-test('validateConfig works', () => {
+test('invalid manifest', () => {
+  const manifestFn = './test/viz/files/invalid_manifest.json';
+  const file = 'manifest';
+  return readFile(manifestFn).then(manifestJSON => {
+    expect(() => sut.validateJSON(manifestJSON, manifestSchema, file)).toThrow();
+  });
+});
+
+test('valid config', () => {
   const validConfigFn = './test/viz/files/config.json';
+  const file = 'config';
   return readFile(validConfigFn).then(configJSON => {
-    expect(sut.validateJSON(configJSON, configSchema)).toBe(true);
+    expect(sut.validateJSON(configJSON, configSchema, file)).toBe(true);
   });
 });

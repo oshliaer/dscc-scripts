@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import {DeploymentChoices, VizArgs} from '../args';
-import {invalidVizConfig} from '../util';
+import {invalidVizConfig, invalidVizJSON} from '../util';
 import * as Ajv from 'ajv';
 
 export interface BuildValues {
@@ -68,11 +68,14 @@ export const validateBuildValues = (args: VizArgs): BuildValues => {
   };
 };
 
-export const validateJSON = (jsonStr: string, schema: any) => {
+export const validateJSON = (jsonStr: string, schema: any, fn: string) => {
   const ajv = new Ajv({allErrors: true});
   const jsonObject = JSON.parse(jsonStr);
   const testJson = ajv.compile(schema);
   const isValid = testJson(jsonObject);
   // testJson.errors
+  if (isValid === false) {
+    throw invalidVizJSON(fn, testJson.errors);
+  }
   return isValid;
 };

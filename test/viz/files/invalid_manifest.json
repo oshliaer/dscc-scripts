@@ -5,10 +5,8 @@
   "logoUrl": "https://logo",
   "organizationUrl": "https://url",
   "supportUrl": "https://url",
-  "privacyPolicyUrl": "https://url",
   "termsOfServiceUrl": "https://url",
   "packageUrl": "https://url",
-  "devMode": "DEVMODE_BOOL",
   "components": [
     {
       "name": "myViz",
