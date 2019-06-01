@@ -72,6 +72,7 @@ export const configSchema = {
     },
     interactions: {
       type: 'array',
+      maxItems: 1,
       items: {
         $ref: '#/definitions/interactionElement',
       },
@@ -87,23 +88,114 @@ export const configSchema = {
         elements: {
           type: 'array',
           items: {
-            $ref: '#/definitions/dataElement',
+            anyof: [
+              {$ref: '#/definitions/dimensionElement'},
+              {$ref: '#/definitions/metricElement'},
+              {$ref: '#/definitions/maxResultsElement'},
+            ]
           },
         },
       },
     },
-    dataElement: {
+    configElement: {
       type: 'object',
       additionalProperties: false,
-      required: ['id', 'type', 'label'],
+      required: ['id', 'label'],
       properties: {
         id: {type: 'string'},
-        type: {
-          type: 'string',
-          enum: ['METRIC', 'DIMENSION'],
+        label: {type: 'string'}
+      }
+    },
+    metricElement: {
+      type: 'object',
+      additionalProperties: false,
+      allOf: [
+        {$ref: '#/definitions/configElement'},
+        {
+          required: ['type'],
+          properties: {
+            type: {
+              type: 'string',
+              enum: [
+                'METRIC'
+              ]
+            },
+            options: {
+              $ref: '#/definitions/dataOptions'
+            },
+          }
         },
-        label: {type: 'string'},
-        options: {type: 'object'},
+      ]
+    },
+    dimensionElement: {
+      type: 'object',
+      additionalProperties: false,
+      allOf: [
+        {$ref: '#/definitions/configElement'},
+        {
+          required: ['type'],
+          properties: {
+            type: {
+              type: 'string',
+              enum: [
+                'DIMENSION'
+              ]
+            },
+            options: {
+              $ref: '#/definitions/dimensionOptions'
+            },
+          }
+        },
+      ]
+    },
+    maxResultsElement: {
+      type: 'object',
+      additionalProperties: false,
+      allOf: [
+        {$ref: '#/definitions/configElement'},
+        {
+          required: ['type'],
+          properties: {
+            type: {
+              type: 'string',
+              enum: [
+                'DIMENSION'
+              ]
+            },
+            options: {
+              $ref: '#/definitions/maxResultsOptions'
+            },
+          }
+        },
+      ]
+    },
+    dataOptions: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        min: {type: 'number'},
+        max: {type: 'number'}
+      },
+    },
+    dimensionOptions: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        supportedTypes: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['TIME', 'GEO', 'DEFAULT']
+          }
+        }
+      },
+    },
+    maxResultsOptions: {
+      type: 'object',
+      required: ['max'],
+      additionalProperties: false,
+      properties: {
+        max: {type: 'number'},
       },
     },
     styleSection: {
@@ -115,7 +207,11 @@ export const configSchema = {
         elements: {
           type: 'array',
           items: {
-            $ref: '#/definitions/styleElement',
+            anyof: [
+              {$ref: '#/definitions/styleElement'},
+              {$ref: '#/definitions/colorStyleElement'},
+              {$ref: '#/definitions/selectStyleElement'},
+            ]
           },
         },
       },
@@ -126,16 +222,67 @@ export const configSchema = {
       required: ['id', 'type', 'label'],
       properties: {
         id: {type: 'string'},
-        type: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: [
+            'FONT_SIZE',
+            'FONT_FAMILY',
+            'CHECKBOX',
+            'TEXTINPUT',
+            'OPACITY',
+            'LINE_WEIGHT',
+            'LINE_STYLE',
+            'BORDER_RADIUS',
+            'INTERVAL',
+          ],
+        },
         label: {type: 'string'},
         defaultValue: {type: 'string'},
-        options: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/styleElementOptions',
-          },
-        },
+
       },
+    },
+    // Eventual TODO: validate defaultValue to be hex string
+    colorStyleElement: {
+      allOf: [
+        {$ref: '#/definitions/styleElement'},
+        {
+          properties: {
+            type: {
+              type: 'string',
+              enum: [
+                'FONT_COLOR',
+                'FILL_COLOR',
+                'BORDER_COLOR',
+                'AXIS_COLOR',
+                'GRID_COLOR',
+              ]
+            }
+          }
+        },
+      ]
+    },
+    selectStyleElement: {
+      allOf: [
+        {$ref: '#/definitions/styleElement'},
+        {
+          required: ['type', 'options'],
+          properties: {
+            type: {
+              type: 'string',
+              enum: [
+                'SELECT_SINGLE',
+                'SELECT_RADIO'
+              ]
+            },
+            options: {
+              type: 'array',
+              items: {
+                $ref: '#/definitions/styleElementOptions',
+              },
+            }
+          }
+        },
+      ]
     },
     styleElementOptions: {
       type: 'object',
