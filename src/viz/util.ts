@@ -17,6 +17,7 @@
 import {DeploymentChoices, VizArgs} from '../args';
 import {invalidVizConfig, invalidVizJSON} from '../util';
 import * as Ajv from 'ajv';
+import 'ajv-merge-patch';
 
 export interface BuildValues {
   devBucket: string;

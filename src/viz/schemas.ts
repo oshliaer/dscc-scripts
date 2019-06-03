@@ -82,6 +82,7 @@ export const configSchema = {
     dataSection: {
       type: 'object',
       additionalProperties: false,
+      required: ['id', 'label', 'elements'],
       properties: {
         id: {type: 'string'},
         label: {type: 'string'},
@@ -92,7 +93,7 @@ export const configSchema = {
               {$ref: '#/definitions/dimensionElement'},
               {$ref: '#/definitions/metricElement'},
               {$ref: '#/definitions/maxResultsElement'},
-            ]
+            ],
           },
         },
       },
@@ -103,8 +104,8 @@ export const configSchema = {
       required: ['id', 'label'],
       properties: {
         id: {type: 'string'},
-        label: {type: 'string'}
-      }
+        label: {type: 'string'},
+      },
     },
     metricElement: {
       type: 'object',
@@ -115,17 +116,14 @@ export const configSchema = {
           required: ['type'],
           properties: {
             type: {
-              type: 'string',
-              enum: [
-                'METRIC'
-              ]
+              'enum': ['METRIC']
             },
             options: {
-              $ref: '#/definitions/dataOptions'
+              $ref: '#/definitions/dataOptions',
             },
-          }
+          },
         },
-      ]
+      ],
     },
     dimensionElement: {
       type: 'object',
@@ -137,16 +135,14 @@ export const configSchema = {
           properties: {
             type: {
               type: 'string',
-              enum: [
-                'DIMENSION'
-              ]
+              enum: ['DIMENSION'],
             },
             options: {
-              $ref: '#/definitions/dimensionOptions'
+              $ref: '#/definitions/dimensionOptions',
             },
-          }
+          },
         },
-      ]
+      ],
     },
     maxResultsElement: {
       type: 'object',
@@ -158,23 +154,21 @@ export const configSchema = {
           properties: {
             type: {
               type: 'string',
-              enum: [
-                'DIMENSION'
-              ]
+              enum: ['MAX_RESULTS'],
             },
             options: {
-              $ref: '#/definitions/maxResultsOptions'
+              $ref: '#/definitions/maxResultsOptions',
             },
-          }
+          },
         },
-      ]
+      ],
     },
     dataOptions: {
       type: 'object',
       additionalProperties: false,
       properties: {
         min: {type: 'number'},
-        max: {type: 'number'}
+        max: {type: 'number'},
       },
     },
     dimensionOptions: {
@@ -185,9 +179,9 @@ export const configSchema = {
           type: 'array',
           items: {
             type: 'string',
-            enum: ['TIME', 'GEO', 'DEFAULT']
-          }
-        }
+            enum: ['TIME', 'GEO', 'DEFAULT'],
+          },
+        },
       },
     },
     maxResultsOptions: {
@@ -200,6 +194,7 @@ export const configSchema = {
     },
     styleSection: {
       type: 'object',
+      required: ['id', 'label', 'elements'],
       additionalProperties: false,
       properties: {
         id: {type: 'string'},
@@ -208,20 +203,21 @@ export const configSchema = {
           type: 'array',
           items: {
             anyof: [
-              {$ref: '#/definitions/styleElement'},
+              {$ref: '#/definitions/genericStyleElement'},
               {$ref: '#/definitions/colorStyleElement'},
               {$ref: '#/definitions/selectStyleElement'},
-            ]
+            ],
           },
         },
       },
     },
-    styleElement: {
+    genericStyleElement: {
       type: 'object',
       additionalProperties: false,
-      required: ['id', 'type', 'label'],
+      required: ['id', 'label', 'type'],
       properties: {
         id: {type: 'string'},
+        label: {type: 'string'},
         type: {
           type: 'string',
           enum: [
@@ -236,53 +232,47 @@ export const configSchema = {
             'INTERVAL',
           ],
         },
-        label: {type: 'string'},
         defaultValue: {type: 'string'},
-
-      },
+      }
     },
     // Eventual TODO: validate defaultValue to be hex string
     colorStyleElement: {
-      allOf: [
-        {$ref: '#/definitions/styleElement'},
-        {
-          properties: {
-            type: {
-              type: 'string',
-              enum: [
-                'FONT_COLOR',
-                'FILL_COLOR',
-                'BORDER_COLOR',
-                'AXIS_COLOR',
-                'GRID_COLOR',
-              ]
-            }
-          }
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: [
+            'FONT_COLOR',
+            'FILL_COLOR',
+            'BORDER_COLOR',
+            'AXIS_COLOR',
+            'GRID_COLOR',
+          ],
         },
-      ]
+      },
     },
     selectStyleElement: {
-      allOf: [
-        {$ref: '#/definitions/styleElement'},
-        {
-          required: ['type', 'options'],
-          properties: {
-            type: {
-              type: 'string',
-              enum: [
-                'SELECT_SINGLE',
-                'SELECT_RADIO'
-              ]
-            },
-            options: {
-              type: 'array',
-              items: {
-                $ref: '#/definitions/styleElementOptions',
-              },
-            }
-          }
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type', 'options'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['SELECT_SINGLE', 'SELECT_RADIO'],
         },
-      ]
+        options: {
+          type: 'array',
+          items: {
+            $ref: '#/definitions/styleElementOptions',
+          },
+        },
+      },
     },
     styleElementOptions: {
       type: 'object',

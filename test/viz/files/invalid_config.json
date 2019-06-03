@@ -7,7 +7,6 @@
         {
           "id": "dimension",
           "label": "Dimensions",
-          "type": "DIMENSION",
           "options": {
             "min": 1,
             "max": 4
@@ -15,7 +14,7 @@
         },
         {
           "id": "metric",
-          "label": "Metric",
+          "label": "metric",
           "type": "METRIC",
           "options": {
             "min": 1,
@@ -25,7 +24,20 @@
       ]
     }
   ],
-  "style": [],
+  "style": [
+    {
+      "id": "styleSection",
+      "label": "styling",
+      "elements": [
+        {
+          "id": "style1",
+          "tooltip": "This should not exist",
+          "label": "style1",
+          "type": "FONT_COLOR"
+        }
+      ]
+    }
+  ],
   "interactions": [
     {
       "id": "onClick",

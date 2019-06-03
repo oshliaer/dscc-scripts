@@ -85,9 +85,9 @@ test('invalid manifest', () => {
   const manifestFn = './test/viz/files/invalid_manifest.json';
   const file = 'manifest';
   return readFile(manifestFn).then((manifestJSON) => {
-    expect(() =>
-      sut.validateJSON(manifestJSON, manifestSchema, file)
-    ).toThrow();
+    expect(() => sut.validateJSON(manifestJSON, manifestSchema, file)).toThrow(
+      'Invalid manifest'
+    );
   });
 });
 
@@ -96,5 +96,13 @@ test('valid config', () => {
   const file = 'config';
   return readFile(validConfigFn).then((configJSON) => {
     expect(sut.validateJSON(configJSON, configSchema, file)).toBe(true);
+  });
+});
+
+test('invalid config', () => {
+  const validConfigFn = './test/viz/files/invalid_config.json';
+  const file = 'config';
+  return readFile(validConfigFn).then((configJSON) => {
+    expect(() => sut.validateJSON(configJSON, configSchema, file)).toThrow('Invalid config');
   });
 });
