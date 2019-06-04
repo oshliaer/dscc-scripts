@@ -22,7 +22,7 @@ import * as webpack from 'webpack';
 import {VizArgs} from '../args';
 import * as util from './util';
 import {BuildValues} from './util';
-import {manifestSchema, configSchema} from './viz/schemas';
+import {manifestSchema, configSchema} from './schemas';
 
 const buildOptions = (buildValues: BuildValues): webpack.Configuration => {
   // common options
