@@ -89,7 +89,7 @@ export const configSchema = {
         elements: {
           type: 'array',
           items: {
-            anyof: [
+            anyOf: [
               {$ref: '#/definitions/dimensionElement'},
               {$ref: '#/definitions/metricElement'},
               {$ref: '#/definitions/maxResultsElement'},
@@ -98,70 +98,53 @@ export const configSchema = {
         },
       },
     },
-    configElement: {
-      type: 'object',
-      additionalProperties: false,
-      required: ['id', 'label'],
-      properties: {
-        id: {type: 'string'},
-        label: {type: 'string'},
-      },
-    },
     metricElement: {
       type: 'object',
       additionalProperties: false,
-      allOf: [
-        {$ref: '#/definitions/configElement'},
-        {
-          required: ['type'],
-          properties: {
-            type: {
-              'enum': ['METRIC']
-            },
-            options: {
-              $ref: '#/definitions/dataOptions',
-            },
-          },
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['METRIC'],
         },
-      ],
+        options: {
+          $ref: '#/definitions/dataOptions',
+        },
+      },
     },
     dimensionElement: {
       type: 'object',
       additionalProperties: false,
-      allOf: [
-        {$ref: '#/definitions/configElement'},
-        {
-          required: ['type'],
-          properties: {
-            type: {
-              type: 'string',
-              enum: ['DIMENSION'],
-            },
-            options: {
-              $ref: '#/definitions/dimensionOptions',
-            },
-          },
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['DIMENSION'],
         },
-      ],
+        options: {
+          $ref: '#/definitions/dimensionOptions',
+        },
+      },
     },
     maxResultsElement: {
       type: 'object',
       additionalProperties: false,
-      allOf: [
-        {$ref: '#/definitions/configElement'},
-        {
-          required: ['type'],
-          properties: {
-            type: {
-              type: 'string',
-              enum: ['MAX_RESULTS'],
-            },
-            options: {
-              $ref: '#/definitions/maxResultsOptions',
-            },
-          },
+      required: ['id', 'label', 'type', 'options'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['MAX_RESULTS'],
         },
-      ],
+        options: {
+          $ref: '#/definitions/maxResultsOptions',
+        },
+      },
     },
     dataOptions: {
       type: 'object',
@@ -175,6 +158,8 @@ export const configSchema = {
       type: 'object',
       additionalProperties: false,
       properties: {
+        min: {type: 'number'},
+        max: {type: 'number'},
         supportedTypes: {
           type: 'array',
           items: {
@@ -202,16 +187,29 @@ export const configSchema = {
         elements: {
           type: 'array',
           items: {
-            anyof: [
-              {$ref: '#/definitions/genericStyleElement'},
-              {$ref: '#/definitions/colorStyleElement'},
-              {$ref: '#/definitions/selectStyleElement'},
+            anyOf: [
+              {$ref: '#/definitions/fontSize'},
+              {$ref: '#/definitions/fontFamily'},
+              {$ref: '#/definitions/checkbox'},
+              {$ref: '#/definitions/textInput'},
+              {$ref: '#/definitions/opacity'},
+              {$ref: '#/definitions/lineWeight'},
+              {$ref: '#/definitions/lineStyle'},
+              {$ref: '#/definitions/borderRadius'},
+              {$ref: '#/definitions/interval'},
+              {$ref: '#/definitions/fontColor'},
+              {$ref: '#/definitions/fillColor'},
+              {$ref: '#/definitions/borderColor'},
+              {$ref: '#/definitions/axisColor'},
+              {$ref: '#/definitions/gridColor'},
+              {$ref: '#/definitions/selectSingle'},
+              {$ref: '#/definitions/selectRadio'},
             ],
           },
         },
       },
     },
-    genericStyleElement: {
+    fontSize: {
       type: 'object',
       additionalProperties: false,
       required: ['id', 'label', 'type'],
@@ -220,23 +218,12 @@ export const configSchema = {
         label: {type: 'string'},
         type: {
           type: 'string',
-          enum: [
-            'FONT_SIZE',
-            'FONT_FAMILY',
-            'CHECKBOX',
-            'TEXTINPUT',
-            'OPACITY',
-            'LINE_WEIGHT',
-            'LINE_STYLE',
-            'BORDER_RADIUS',
-            'INTERVAL',
-          ],
+          enum: ['FONT_SIZE'],
         },
         defaultValue: {type: 'string'},
-      }
+      },
     },
-    // Eventual TODO: validate defaultValue to be hex string
-    colorStyleElement: {
+    fontFamily: {
       type: 'object',
       additionalProperties: false,
       required: ['id', 'label', 'type'],
@@ -245,17 +232,240 @@ export const configSchema = {
         label: {type: 'string'},
         type: {
           type: 'string',
-          enum: [
-            'FONT_COLOR',
-            'FILL_COLOR',
-            'BORDER_COLOR',
-            'AXIS_COLOR',
-            'GRID_COLOR',
+          enum: ['FONT_FAMILY'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    checkbox: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['CHECKBOX'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    textInput: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['TEXTINPUT'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    opacity: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['OPACITY'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    lineWeight: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['LINE_WEIGHT'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    lineStyle: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['LINE_STYLE'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    borderRadius: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['BORDER_RADIUS'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    interval: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['INTERVAL'],
+        },
+        defaultValue: {type: 'string'},
+      },
+    },
+    fontColor: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['FONT_COLOR'],
+        },
+        defaultValue: {
+          anyOf: [
+            {type: 'string'},
+            {
+              type: 'object',
+              additionalProperties: false,
+              required: ['value'],
+              properties: {
+                value: {type: 'string'},
+              },
+            },
           ],
         },
       },
     },
-    selectStyleElement: {
+    fillColor: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['FILL_COLOR'],
+        },
+        defaultValue: {
+          anyOf: [
+            {type: 'string'},
+            {
+              type: 'object',
+              additionalProperties: false,
+              required: ['value'],
+              properties: {
+                value: {type: 'string'},
+              },
+            },
+          ],
+        },
+      },
+    },
+    borderColor: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['BORDER_COLOR'],
+        },
+        defaultValue: {
+          anyOf: [
+            {type: 'string'},
+            {
+              type: 'object',
+              additionalProperties: false,
+              required: ['value'],
+              properties: {
+                value: {type: 'string'},
+              },
+            },
+          ],
+        },
+      },
+    },
+    axisColor: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['AXIS_COLOR'],
+        },
+        defaultValue: {
+          anyOf: [
+            {type: 'string'},
+            {
+              type: 'object',
+              additionalProperties: false,
+              required: ['value'],
+              properties: {
+                value: {type: 'string'},
+              },
+            },
+          ],
+        },
+      },
+    },
+    gridColor: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['GRID_COLOR'],
+        },
+        defaultValue: {
+          anyOf: [
+            {type: 'string'},
+            {
+              type: 'object',
+              additionalProperties: false,
+              required: ['value'],
+              properties: {
+                value: {type: 'string'},
+              },
+            },
+          ],
+        },
+      },
+    },
+    selectSingle: {
       type: 'object',
       additionalProperties: false,
       required: ['id', 'label', 'type', 'options'],
@@ -264,7 +474,26 @@ export const configSchema = {
         label: {type: 'string'},
         type: {
           type: 'string',
-          enum: ['SELECT_SINGLE', 'SELECT_RADIO'],
+          enum: ['SELECT_SINGLE'],
+        },
+        options: {
+          type: 'array',
+          items: {
+            $ref: '#/definitions/styleElementOptions',
+          },
+        },
+      },
+    },
+    selectRadio: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id', 'label', 'type', 'options'],
+      properties: {
+        id: {type: 'string'},
+        label: {type: 'string'},
+        type: {
+          type: 'string',
+          enum: ['SELECT_RADIO'],
         },
         options: {
           type: 'array',

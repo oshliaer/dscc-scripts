@@ -42,7 +42,10 @@
         {
           "id": "style1",
           "label": "style1",
-          "type": "FONT_COLOR"
+          "type": "FONT_COLOR",
+          "defaultValue": {
+            "value": "#000000"
+          }
         },
         {
           "id": "style2",
@@ -97,7 +100,8 @@
         {
           "id": "style8",
           "label": "style1",
-          "type": "FILL_COLOR"
+          "type": "FILL_COLOR",
+          "defaultValue": "#000000"
         },
         {
           "id": "style9",

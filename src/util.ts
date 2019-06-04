@@ -91,6 +91,6 @@ export const pipeStdIO: CommonOptions = {stdio: 'inherit'};
 export const invalidVizJSON = (fn: string, err: any) => {
   return new Error(`
     Invalid ${fn} file\n
-    ${JSON.stringify(err)}
+    ${JSON.stringify(err, undefined, '  ')}
   `);
 };

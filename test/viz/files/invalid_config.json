@@ -15,7 +15,7 @@
         {
           "id": "metric",
           "label": "metric",
-          "type": "METRIC",
+          "type": "WRONG_TYPE",
           "options": {
             "min": 1,
             "max": 1

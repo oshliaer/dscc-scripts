@@ -103,6 +103,8 @@ test('invalid config', () => {
   const validConfigFn = './test/viz/files/invalid_config.json';
   const file = 'config';
   return readFile(validConfigFn).then((configJSON) => {
-    expect(() => sut.validateJSON(configJSON, configSchema, file)).toThrow('Invalid config');
+    expect(() => sut.validateJSON(configJSON, configSchema, file)).toThrow(
+      'Invalid config'
+    );
   });
 });
