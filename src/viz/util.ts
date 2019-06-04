@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as Ajv from 'ajv';
 import {DeploymentChoices, VizArgs} from '../args';
 import {invalidVizConfig, invalidVizJSON} from '../util';
-import * as Ajv from 'ajv';
-import 'ajv-merge-patch';
 
 export interface BuildValues {
   devBucket: string;

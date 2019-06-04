@@ -1,7 +1,7 @@
-import {VizScripts} from '../../src/args';
-import * as sut from '../../src/viz/util';
 import * as fs from 'mz/fs';
-import {manifestSchema, configSchema} from '../../src/viz/schemas';
+import {VizScripts} from '../../src/args';
+import {configSchema, manifestSchema} from '../../src/viz/schemas';
+import * as sut from '../../src/viz/util';
 
 const readFile = async (fn: string) => {
   const encoding = 'utf-8';

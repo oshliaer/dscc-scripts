@@ -31,7 +31,6 @@
     "prettier:check": "prettier --check \"{src,test}/**/*.{ts,js}\""
   },
   "dependencies": {
-    "ajv-merge-patch": "^4.1.0",
     "argparse": "^1.0.10",
     "bluebird": "^3.5.3",
     "chalk": "^2.4.2",
