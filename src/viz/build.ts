@@ -20,7 +20,6 @@ import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import {VizArgs} from '../args';
-import {configSchema, manifestSchema} from './schemas';
 import * as util from './util';
 import {BuildValues} from './util';
 
