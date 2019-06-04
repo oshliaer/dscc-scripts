@@ -17,6 +17,7 @@
 import * as Ajv from 'ajv';
 import {DeploymentChoices, VizArgs} from '../args';
 import {invalidVizConfig, invalidVizJSON} from '../util';
+import {configSchema, manifestSchema} from './schemas';
 
 export interface BuildValues {
   devBucket: string;
@@ -68,7 +69,7 @@ export const validateBuildValues = (args: VizArgs): BuildValues => {
   };
 };
 
-export const validateJSON = (jsonStr: string, schema: any, fn: string) => {
+const validateJSON = (jsonStr: string, schema: any, fn: string) => {
   const ajv = new Ajv({allErrors: true});
   const jsonObject = JSON.parse(jsonStr);
   const testJson = ajv.compile(schema);
@@ -78,4 +79,14 @@ export const validateJSON = (jsonStr: string, schema: any, fn: string) => {
     throw invalidVizJSON(fn, testJson.errors);
   }
   return isValid;
+};
+
+export const validateConfig = (configContents: string) => {
+  const filename = 'config';
+  return validateJSON(configContents, configSchema, filename);
+};
+
+export const validateManifest = (manifestContents: string) => {
+  const filename = 'manifest';
+  return validateJSON(manifestContents, manifestSchema, filename);
 };

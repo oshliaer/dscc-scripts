@@ -1,6 +1,5 @@
 import * as fs from 'mz/fs';
 import {VizScripts} from '../../src/args';
-import {configSchema, manifestSchema} from '../../src/viz/schemas';
 import * as sut from '../../src/viz/util';
 
 const readFile = async (fn: string) => {
@@ -74,37 +73,31 @@ test('validateBuildValues missing gcsProdBucket', () => {
 });
 
 test('valid manifest', () => {
-  const validManifestFn = './test/viz/files/manifest.json';
-  const file = 'manifest';
-  return readFile(validManifestFn).then((manifestJSON) => {
-    expect(sut.validateJSON(manifestJSON, manifestSchema, file)).toBe(true);
+  const validManifestFn = './test/viz/files/valid_manifest.json';
+  return readFile(validManifestFn).then((manifestContents) => {
+    expect(sut.validateManifest(manifestContents)).toBe(true);
   });
 });
 
 test('invalid manifest', () => {
-  const manifestFn = './test/viz/files/invalid_manifest.json';
-  const file = 'manifest';
-  return readFile(manifestFn).then((manifestJSON) => {
-    expect(() => sut.validateJSON(manifestJSON, manifestSchema, file)).toThrow(
+  const manifestFn = './test/viz/files/manifest_no_privacyPolicyUrl.json';
+  return readFile(manifestFn).then((manifestContents) => {
+    expect(() => sut.validateManifest(manifestContents)).toThrow(
       'Invalid manifest'
     );
   });
 });
 
 test('valid config', () => {
-  const validConfigFn = './test/viz/files/valid_config_1.json';
-  const file = 'config';
-  return readFile(validConfigFn).then((configJSON) => {
-    expect(sut.validateJSON(configJSON, configSchema, file)).toBe(true);
+  const validConfigFn = './test/viz/files/valid_config.json';
+  return readFile(validConfigFn).then((configContents) => {
+    expect(sut.validateConfig(configContents)).toBe(true);
   });
 });
 
 test('invalid config', () => {
-  const validConfigFn = './test/viz/files/invalid_config.json';
-  const file = 'config';
-  return readFile(validConfigFn).then((configJSON) => {
-    expect(() => sut.validateJSON(configJSON, configSchema, file)).toThrow(
-      'Invalid config'
-    );
+  const validConfigFn = './test/viz/files/config_extraStyleKey.json';
+  return readFile(validConfigFn).then((configContents) => {
+    expect(() => sut.validateConfig(configContents)).toThrow('Invalid config');
   });
 });

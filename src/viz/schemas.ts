@@ -34,10 +34,10 @@ export const manifestSchema = {
   definitions: {
     component: {
       type: 'object',
+      additionalProperties: false,
       required: ['name', 'description', 'iconUrl', 'resource'],
       properties: {
         name: {type: 'string'},
-        organization: {type: 'string'},
         description: {type: 'string'},
         iconUrl: {type: 'string'},
         resource: {$ref: '#/definitions/resources'},
@@ -45,10 +45,12 @@ export const manifestSchema = {
     },
     resources: {
       type: 'object',
+      additionalProperties: false,
       required: ['js', 'config'],
       properties: {
         js: {type: 'string'},
         config: {type: 'string'},
+        css: {type: 'string'},
       },
     },
   },

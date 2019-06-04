@@ -69,7 +69,7 @@ export const build = async (args: VizArgs) => {
 
   const configSrc = path.resolve(process.env.PWD!, 'src', buildValues.jsonFile);
   const configContents = await fs.readFile(configSrc, encoding);
-  util.validateJSON(configContents, configSchema, 'config');
+  util.validateConfig(configContents);
 
   const compilerRun = bluebird.promisify(compiler.run, {context: compiler});
 
@@ -86,7 +86,7 @@ export const build = async (args: VizArgs) => {
     buildValues.manifestFile
   );
   const manifestContents = await fs.readFile(manifestSrc, encoding);
-  util.validateJSON(manifestContents, manifestSchema, 'manifest');
+  util.validateManifest(manifestContents);
   const newManifest = manifestContents
     .replace(/YOUR_GCS_BUCKET/g, buildValues.gcsBucket)
     .replace(/"DEVMODE_BOOL"/, `${buildValues.devMode}`);

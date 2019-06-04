@@ -20,7 +20,6 @@
     "arrowParens": "always"
   },
   "scripts": {
-    "random": "tsc && node build/test.js",
     "build": "tsc",
     "build:check": "tsc --noEmit",
     "build:watch": "tsc --watch",
