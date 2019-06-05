@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as Ajv from 'ajv';
 import {DeploymentChoices, VizArgs} from '../args';
-import {invalidVizConfig} from '../util';
+import {invalidVizConfig, invalidVizJSON} from '../util';
+import {configSchema, manifestSchema} from './schemas';
 
 export interface BuildValues {
   devBucket: string;
@@ -65,4 +67,26 @@ export const validateBuildValues = (args: VizArgs): BuildValues => {
     pwd,
     gcsBucket,
   };
+};
+
+const validateJSON = (jsonStr: string, schema: any, fn: string) => {
+  const ajv = new Ajv({allErrors: true});
+  const jsonObject = JSON.parse(jsonStr);
+  const testJson = ajv.compile(schema);
+  const isValid = testJson(jsonObject);
+  // testJson.errors
+  if (isValid === false) {
+    throw invalidVizJSON(fn, testJson.errors);
+  }
+  return isValid;
+};
+
+export const validateConfig = (configContents: string) => {
+  const filename = 'config';
+  return validateJSON(configContents, configSchema, filename);
+};
+
+export const validateManifest = (manifestContents: string) => {
+  const filename = 'manifest';
+  return validateJSON(manifestContents, manifestSchema, filename);
 };

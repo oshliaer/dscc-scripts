@@ -1,5 +1,11 @@
+import * as fs from 'mz/fs';
 import {VizScripts} from '../../src/args';
 import * as sut from '../../src/viz/util';
+
+const readFile = async (fn: string) => {
+  const encoding = 'utf-8';
+  return fs.readFile(fn, encoding);
+};
 
 beforeEach(() => {
   process.env.npm_package_dsccViz_cssFile = 'cssFile';
@@ -64,4 +70,34 @@ test('validateBuildValues missing gcsProdBucket', () => {
   expect(() => sut.validateBuildValues({script: VizScripts.BUILD})).toThrow(
     'dsccViz.gcsProdBucket'
   );
+});
+
+test('valid manifest', () => {
+  const validManifestFn = './test/viz/files/valid_manifest.json';
+  return readFile(validManifestFn).then((manifestContents) => {
+    expect(sut.validateManifest(manifestContents)).toBe(true);
+  });
+});
+
+test('invalid manifest', () => {
+  const manifestFn = './test/viz/files/manifest_no_privacyPolicyUrl.json';
+  return readFile(manifestFn).then((manifestContents) => {
+    expect(() => sut.validateManifest(manifestContents)).toThrow(
+      'Invalid manifest'
+    );
+  });
+});
+
+test('valid config', () => {
+  const validConfigFn = './test/viz/files/valid_config.json';
+  return readFile(validConfigFn).then((configContents) => {
+    expect(sut.validateConfig(configContents)).toBe(true);
+  });
+});
+
+test('invalid config', () => {
+  const validConfigFn = './test/viz/files/config_extraStyleKey.json';
+  return readFile(validConfigFn).then((configContents) => {
+    expect(() => sut.validateConfig(configContents)).toThrow('Invalid config');
+  });
 });
