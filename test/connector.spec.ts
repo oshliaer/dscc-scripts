@@ -69,6 +69,33 @@ test('update_production missing from package.json', () => {
   ).rejects.toThrow('production');
 });
 
+describe('for push', () => {
+  beforeEach(() => {
+    (execa as any).mockClear();
+  });
+
+  test('no additional args', async () => {
+    expect(await sut.main({script: ConnectorScripts.PUSH_CHANGES})).toEqual(
+      undefined
+    );
+    expect((execa as any).mock.calls[0][1]).toEqual(['@google/clasp', 'push']);
+  });
+
+  test('with force argument', async () => {
+    expect(
+      await sut.main({
+        script: ConnectorScripts.PUSH_CHANGES,
+        forcePushChanges: true,
+      })
+    ).toEqual(undefined);
+    expect((execa as any).mock.calls[0][1]).toEqual([
+      '@google/clasp',
+      'push',
+      '--force',
+    ]);
+  });
+});
+
 describe('for open_template', () => {
   const validManifest = {dataStudio: {templates: {default: 'report-id'}}};
 

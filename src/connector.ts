@@ -69,8 +69,12 @@ const updateProduction = async () => {
   );
 };
 
-const pushChanges = async (): Promise<void> => {
-  await execa('npx', ['@google/clasp', 'push'], pipeStdIO);
+const pushChanges = async (args: ConnectorArgs): Promise<void> => {
+  const baseCommand = ['@google/clasp', 'push'];
+  const command = args.forcePushChanges
+    ? baseCommand.concat(['--force'])
+    : baseCommand;
+  await execa('npx', command, pipeStdIO);
 };
 
 const watchChanges = async (): Promise<void> => {
@@ -154,7 +158,7 @@ export const main = async (args: ConnectorArgs): Promise<void> => {
     case ConnectorScripts.UPDATE_PRODUCTION:
       return updateProduction();
     case ConnectorScripts.PUSH_CHANGES:
-      return pushChanges();
+      return pushChanges(args);
     case ConnectorScripts.WATCH_CHANGES:
       return watchChanges();
     case ConnectorScripts.OPEN_SCRIPT:
