@@ -34,6 +34,7 @@ export enum ConnectorScripts {
 
 export interface ConnectorArgs {
   script: ConnectorScripts;
+  forcePushChanges?: true;
 }
 
 const addConnectorParserDetails = (subparsers: argparse.SubParser) => {
@@ -50,9 +51,15 @@ const addConnectorParserDetails = (subparsers: argparse.SubParser) => {
   Object.values(ConnectorScripts).forEach((scriptName: ConnectorScripts) => {
     switch (scriptName) {
       case ConnectorScripts.PUSH_CHANGES:
-        connectorSubparsers.addParser(scriptName, {
+        const pushChangesSubparser = connectorSubparsers.addParser(scriptName, {
           addHelp: true,
           description: 'Push your local changes to Apps Script.',
+        });
+        pushChangesSubparser.addArgument(['-f', '--force'], {
+          action: 'storeTrue',
+          dest: 'forcePushChanges',
+          help: 'Force changes to the manifest.',
+          required: false,
         });
         break;
       case ConnectorScripts.WATCH_CHANGES:

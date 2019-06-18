@@ -27,7 +27,8 @@
     "test:watch": "jest --watchAll --coverage",
     "lint": "tslint -c tslint.json  \"{src,test}/**/*.{ts,js}\"",
     "prettier": "prettier --write \"{src,test}/**/*.{ts,js}\"",
-    "prettier:check": "prettier --check \"{src,test}/**/*.{ts,js}\""
+    "prettier:check": "prettier --check \"{src,test}/**/*.{ts,js}\"",
+    "fix": "yarn lint --fix && yarn prettier"
   },
   "dependencies": {
     "argparse": "^1.0.10",

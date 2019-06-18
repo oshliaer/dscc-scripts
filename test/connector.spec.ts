@@ -5,7 +5,11 @@ import * as sut from '../src/connector';
 jest.mock('open');
 jest.mock('execa');
 
+const logMock = jest.fn();
+
 beforeEach(() => {
+  logMock.mockClear();
+  global.console = Object.assign(global.console, {log: logMock});
   (open as any).mockClear();
   (execa as any).mockClear();
   process.env.npm_package_dsccConnector_latest = 'latestId';
@@ -13,28 +17,32 @@ beforeEach(() => {
   process.env.npm_package_dsccConnector_template = 'templateId';
 });
 
-test('try_production happy path', () => {
+test('try_production happy path', async () => {
   (open as any).mockResolvedValue(undefined);
 
-  expect(sut.main({script: ConnectorScripts.TRY_PRODUCTION})).resolves.toEqual(
+  expect(await sut.main({script: ConnectorScripts.TRY_PRODUCTION})).toEqual(
     undefined
   );
+  expect(logMock.mock.calls[0][0]).toMatch('Opening:');
+  expect(logMock.mock.calls[0][0]).toMatch('Production deployment');
 });
 
-test('try_latest happy path', () => {
+test('try_latest happy path', async () => {
   (open as any).mockResolvedValue(undefined);
 
-  expect(sut.main({script: ConnectorScripts.TRY_LATEST})).resolves.toEqual(
+  expect(await sut.main({script: ConnectorScripts.TRY_LATEST})).toEqual(
     undefined
   );
+  expect(logMock.mock.calls[0][0]).toMatch('Opening:');
+  expect(logMock.mock.calls[0][0]).toMatch('latest deployment');
 });
 
-test('update_production happy path', () => {
+test('update_production happy path', async () => {
   (execa as any).mockResolvedValue('');
 
-  expect(
-    sut.main({script: ConnectorScripts.UPDATE_PRODUCTION})
-  ).resolves.toEqual(undefined);
+  expect(await sut.main({script: ConnectorScripts.UPDATE_PRODUCTION})).toEqual(
+    undefined
+  );
 });
 
 test('try_production missing from package.json', () => {
@@ -61,19 +69,52 @@ test('update_production missing from package.json', () => {
   ).rejects.toThrow('production');
 });
 
+describe('for push', () => {
+  beforeEach(() => {
+    (execa as any).mockClear();
+  });
+
+  test('no additional args', async () => {
+    expect(await sut.main({script: ConnectorScripts.PUSH_CHANGES})).toEqual(
+      undefined
+    );
+    expect((execa as any).mock.calls[0][1]).toEqual(['@google/clasp', 'push']);
+  });
+
+  test('with force argument', async () => {
+    expect(
+      await sut.main({
+        script: ConnectorScripts.PUSH_CHANGES,
+        forcePushChanges: true,
+      })
+    ).toEqual(undefined);
+    expect((execa as any).mock.calls[0][1]).toEqual([
+      '@google/clasp',
+      'push',
+      '--force',
+    ]);
+  });
+});
+
 describe('for open_template', () => {
   const validManifest = {dataStudio: {templates: {default: 'report-id'}}};
 
   beforeEach(() => {
-    jest.spyOn(sut, 'getAppsScriptManifest').mockResolvedValue(validManifest);
+    logMock.mockClear();
+    jest
+      .spyOn(sut, 'getAppsScriptManifest')
+      .mockImplementation()
+      .mockResolvedValue(validManifest);
   });
 
-  test('happy path', () => {
+  test('happy path', async () => {
     (open as any).mockResolvedValue(undefined);
 
-    expect(sut.main({script: ConnectorScripts.OPEN_TEMPLATE})).resolves.toEqual(
+    expect(await sut.main({script: ConnectorScripts.OPEN_TEMPLATE})).toEqual(
       undefined
     );
+    expect(logMock.mock.calls[0][0]).toMatch('Opening:');
+    expect(logMock.mock.calls[0][0]).toMatch('template');
   });
 
   test('template missing from package.json', () => {
