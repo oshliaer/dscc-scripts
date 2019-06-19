@@ -8,6 +8,109 @@ beforeAll(() => {
   };
 });
 
+describe('For viz args', () => {
+  test('too few arguments', () => {
+    expect(() => parser.parseArgs(['viz'])).toThrow('too few arguments');
+  });
+
+  describe('start', () => {
+    test('no additional args', () => {
+      const actual = parser.parseArgs(['viz', 'start']);
+      expect(actual).toEqual({
+        script: 'start',
+        scriptChoice: 'viz',
+      });
+    });
+  });
+
+  describe('build', () => {
+    test('no additional args', () => {
+      const actual = parser.parseArgs(['viz', 'build']);
+      expect(actual).toEqual({
+        deployment: null,
+        script: 'build',
+        scriptChoice: 'viz',
+      });
+    });
+  });
+
+  describe('push', () => {
+    test('no additional args', () => {
+      const actual = parser.parseArgs(['viz', 'push']);
+      expect(actual).toEqual({
+        deployment: null,
+        script: 'push',
+        scriptChoice: 'viz',
+      });
+    });
+  });
+
+  describe('update_message', () => {
+    test('missing format', () => {
+      expect(() => parser.parseArgs(['viz', 'update_message'])).toThrow(
+        /Argument .* is required/
+      );
+    });
+
+    test('shortform format missing format', () => {
+      expect(() => parser.parseArgs(['viz', 'update_message', '-f'])).toThrow(
+        'Expected one argument'
+      );
+    });
+
+    test('shortform format object', () => {
+      const actual = parser.parseArgs([
+        'viz',
+        'update_message',
+        '-f',
+        'object',
+      ]);
+      expect(actual).toEqual({
+        format: 'object',
+        script: 'update_message',
+        scriptChoice: 'viz',
+      });
+    });
+
+    test('longform format object', () => {
+      const actual = parser.parseArgs([
+        'viz',
+        'update_message',
+        '--format',
+        'object',
+      ]);
+      expect(actual).toEqual({
+        format: 'object',
+        script: 'update_message',
+        scriptChoice: 'viz',
+      });
+    });
+
+    test('shortform format table', () => {
+      const actual = parser.parseArgs(['viz', 'update_message', '-f', 'table']);
+      expect(actual).toEqual({
+        format: 'table',
+        script: 'update_message',
+        scriptChoice: 'viz',
+      });
+    });
+
+    test('longform format table', () => {
+      const actual = parser.parseArgs([
+        'viz',
+        'update_message',
+        '--format',
+        'table',
+      ]);
+      expect(actual).toEqual({
+        format: 'table',
+        script: 'update_message',
+        scriptChoice: 'viz',
+      });
+    });
+  });
+});
+
 describe('For connector args', () => {
   test('too few arguments', () => {
     expect(() => parser.parseArgs(['connector'])).toThrow('too few arguments');
