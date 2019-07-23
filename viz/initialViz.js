@@ -39,22 +39,23 @@ For more information, see the
 
 `;
 
-export const firstViz = (data) => {
+export const readmeViz = () => {
   // append a div to the DOM for the README
   if (document.querySelector('div')) {
     var oldDiv = document.querySelector('div');
     oldDiv.parentNode.removeChild(oldDiv);
   }
+  let readmeDiv = document.createElement('div');
+  readmeDiv.innerHTML = README;
+  document.body.appendChild(readmeDiv);
+}
 
+export const firstViz = (data) => {
+  
   if (document.querySelector('canvas')) {
     var oldCanv = document.querySelector('canvas');
     oldCanv.parentNode.removeChild(oldCanv);
   }
-
-  // append the data to a div
-  let readmeDiv = document.createElement('div');
-  readmeDiv.innerHTML = README;
-  document.body.appendChild(readmeDiv);
 
   // everything below is verbatim from the codelab
   // create and add the canvas
