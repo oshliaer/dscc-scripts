@@ -37,6 +37,7 @@ export const manifestSchema = {
       additionalProperties: false,
       required: ['name', 'description', 'iconUrl', 'resource'],
       properties: {
+        id: {type: 'string'},
         name: {type: 'string'},
         description: {type: 'string'},
         iconUrl: {type: 'string'},
