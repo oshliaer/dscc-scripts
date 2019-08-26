@@ -11,6 +11,7 @@
   "devMode": "DEVMODE_BOOL",
   "components": [
     {
+      "id": "theViz",
       "name": "myViz",
       "description": "My first Community Visualization",
       "iconUrl": "https://url",
